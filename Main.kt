@@ -10,7 +10,7 @@ class PhoneBook {
     private var linearSearchDuration = 0L
 
     init {
-        val directoryFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\small_directory.txt")
+        val directoryFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\sorted.txt")
         val findFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\find.txt")
         if (!directoryFile.exists()) exitProcess(1)
         if (!findFile.exists()) exitProcess(1)
@@ -24,7 +24,7 @@ class PhoneBook {
         val start = System.currentTimeMillis()
         for (i in find) {
             for (j in book) {
-                if (j.matches(""".+$i""".toRegex())) {
+                if (j.contains(i)) {
                     counter++
                     break
                 }
@@ -44,15 +44,17 @@ class PhoneBook {
         val start = System.currentTimeMillis()
         var sorted = false
         var duration = 0L
-        //println(book.size)
 
         while (!sorted) {
             sorted = true
 
-            for (i in 0 until book.lastIndex - 1) {
-                val element = book[i].split(" ")
-                val nextElement = book[i + 1].split(" ")
-                if (element[1] > nextElement[1]) {
+            for (i in 0 until book.lastIndex) {
+                val value = book[i].split(" ")
+                val nextValue = book[i + 1].split(" ")
+                val element = if (value.size > 2) "${value[1]} ${value[2]}" else value[1]
+                val nextElement = if (nextValue.size > 2) "${nextValue[1]} ${nextValue[2]}" else nextValue[1]
+
+                if (element > nextElement) {
                     book[i] = book[i + 1].also { book[i + 1] = book[i] }
                     sorted = false
                 }
@@ -71,6 +73,7 @@ class PhoneBook {
                 return
             }
         }
+        File("sorted.txt").writeText(book.joinToString("\n"))
 
         println(
             "Sorting time: " +
@@ -84,24 +87,24 @@ class PhoneBook {
         var counter = 0
 
         val start = System.currentTimeMillis()
-
         for (element in find) {
-            loop@for (i in book.indices step step) {
-                var index = i
-                if (i + step > book.lastIndex) index = book.lastIndex
-                val list = book[index].split(" ")
+            var n = 0
+
+            loop@while (n <= book.lastIndex) {
+                val list = book[n].split(" ")
                 val elementInBook = if (list.size > 2) "${list[1]} ${list[2]}" else list[1]
 
                 if (element == elementInBook) {
                     counter++
                     break
                 } else if (element > elementInBook) {
+                    if (n + step in book.lastIndex until book.lastIndex + step) n = book.lastIndex else n += step
                     continue
-                } else if (index == 0) {
+                } else if (n == 0) {
                     break
                 } else {
-                    for (j in index downTo index - step) {
-                        if (book[j].matches(""".+$element""".toRegex())) {
+                    for (j in n downTo n - step) {
+                        if (book[j].contains(element)) {
                             counter++
                             break@loop
                         }
@@ -117,17 +120,23 @@ class PhoneBook {
                     "${duration / 60000} min. ${(duration % 60000) / 1000} sec. ${duration % 1000} ms."
         )
     }
+
+    fun quickSort() {
+        TODO()
+    }
+
+    fun binarySearch() {
+        TODO()
+    }
 }
 
 fun main() {
-    //PhoneBook().findNumbers(File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\find.txt"))
     PhoneBook().run {
         println("Start searching (linear search)...")
         findNumbers()
         println()
         println("Start searching (bubble sort + jump search)...")
         bubbleSort()
-        //findNumbers()
         //jumpSearch()
     }
 }
