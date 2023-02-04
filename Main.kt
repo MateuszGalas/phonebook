@@ -5,12 +5,12 @@ import kotlin.math.sqrt
 import kotlin.system.exitProcess
 
 class PhoneBook {
-    private val book: MutableList<String>
+    val book: MutableList<String>
     private val find: List<String>
     private var linearSearchDuration = 0L
 
     init {
-        val directoryFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\sorted.txt")
+        val directoryFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\small_directory.txt")
         val findFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\find.txt")
         if (!directoryFile.exists()) exitProcess(1)
         if (!findFile.exists()) exitProcess(1)
@@ -121,10 +121,99 @@ class PhoneBook {
         )
     }
 
-    fun quickSort() {
-        TODO()
+/*    fun quickSort(leftIndex: Int, rightIndex: Int) {
+        val pivotIndex = (leftIndex + rightIndex) / 2
+        var l = leftIndex
+        var r = rightIndex
+        //val queue = ArrayDeque<String>()
+        if(l >= r) return
+
+        val value = book[pivotIndex].split(" ")
+        val pivot = if (value.size > 2) "${value[1]} ${value[2]}" else value[1]
+        //book.removeAt(pivotIndex)
+        //queue.add(pivot)
+
+        while (true) {
+            var left: String
+            var right: String
+
+            do  {
+                if (l > rightIndex) break
+                val valueLeft = book[l++].split(" ")
+                left = if (valueLeft.size > 2) "${valueLeft[1]} ${valueLeft[2]}" else valueLeft[1]
+            } while (pivot > left)
+
+            do {
+                if (r < leftIndex) break
+                val valueRight = book[r--].split(" ")
+                right = if (valueRight.size > 2) "${valueRight[1]} ${valueRight[2]}" else valueRight[1]
+            } while (pivot < right)
+
+            if (l < r) {
+                book[l] = book[r].also { book[r] = book[l] }
+            } else {
+                break
+            }
+        }
+
+        if (r > leftIndex) quickSort(leftIndex, r)
+        if (l < rightIndex) quickSort(l, rightIndex)
+
+    }*/
+
+
+    /* This function takes last element as pivot, places
+       the pivot element at its correct position in sorted
+       array, and places all smaller (smaller than pivot)
+       to left of pivot and all greater elements to right
+       of pivot */
+    fun partition(low: Int, high: Int): Int {
+
+        // pivot
+        val value = book[high].split(" ")
+        val pivot = if (value.size > 2) "${value[1]} ${value[2]}" else value[1]
+        // Index of smaller element and
+        // indicates the right position
+        // of pivot found so far
+        var i = low - 1
+        for (j in low..high - 1) {
+
+            // If current element is smaller
+            // than the pivot
+            val element = book[j].split(" ")
+            val elementValue = if (element.size > 2) "${element[1]} ${element[2]}" else element[1]
+
+            if (elementValue < pivot) {
+
+                // Increment index of
+                // smaller element
+                i++
+                book[i] = book[j].also { book[j] = book[i] }
+                //swap(i, j)
+            }
+        }
+        book[i + 1] = book[high].also { book[high] = book[i + 1] }
+        return i + 1
     }
 
+    /* The main function that implements QuickSort
+              arr[] --> Array to be sorted,
+              low --> Starting index,
+              high --> Ending index
+     */
+    fun quickSort(low: Int, high: Int) {
+        if (low < high) {
+
+            // pi is partitioning index, arr[p]
+            // is now at right place
+            val pi = partition(low, high)
+
+            // Separately sort elements before
+            // partition and after partition
+            quickSort(low, pi - 1)
+            quickSort(pi + 1, high)
+        }
+    }
     fun binarySearch() {
         TODO()
     }
@@ -133,10 +222,15 @@ class PhoneBook {
 fun main() {
     PhoneBook().run {
         println("Start searching (linear search)...")
-        findNumbers()
+        //findNumbers()
         println()
         println("Start searching (bubble sort + jump search)...")
-        bubbleSort()
+        //bubbleSort()
         //jumpSearch()
+        quickSort(0, book.lastIndex)
+
+        for (i in 0..50) {
+            println(book[i])
+        }
     }
 }
