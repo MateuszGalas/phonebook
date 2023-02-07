@@ -10,7 +10,7 @@ class PhoneBook {
     private var linearSearchDuration = 0L
 
     init {
-        val directoryFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\small_directory.txt")
+        val directoryFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\directory.txt")
         val findFile = File("C:\\Users\\Mateusz\\IdeaProjects\\Phone Book\\find.txt")
         if (!directoryFile.exists()) exitProcess(1)
         if (!findFile.exists()) exitProcess(1)
@@ -215,22 +215,55 @@ class PhoneBook {
         }
     }
     fun binarySearch() {
-        TODO()
+        var counter = 0
+        val start = System.currentTimeMillis()
+
+        loop@for (element in find) {
+            var low = 0
+            var high = book.lastIndex
+
+
+            while (low != high) {
+                var mid = (low + high) / 2
+                val list = book[mid].split(" ")
+                val elementInBook = if (list.size > 2) "${list[1]} ${list[2]}" else list[1]
+
+                if (element == elementInBook) {
+                    counter++
+                    continue@loop
+                }
+                if (element > elementInBook) {
+                    low = mid
+                } else {
+                    high = mid
+                }
+            }
+        }
+        val end = System.currentTimeMillis()
+        val duration = end - start
+        println(
+            "Found $counter / ${find.size} entries. Time taken: " +
+                    "${duration / 60000} min. ${(duration % 60000) / 1000} sec. ${duration % 1000} ms."
+        )
     }
 }
 
 fun main() {
     PhoneBook().run {
         println("Start searching (linear search)...")
-        //findNumbers()
+        findNumbers()
         println()
         println("Start searching (bubble sort + jump search)...")
         //bubbleSort()
         //jumpSearch()
+        val start = System.currentTimeMillis()
         quickSort(0, book.lastIndex)
-
-        for (i in 0..50) {
-            println(book[i])
-        }
+        val end = System.currentTimeMillis()
+        val duration = end - start
+        println(
+            "Time taken: " +
+                    "${duration / 60000} min. ${(duration % 60000) / 1000} sec. ${duration % 1000} ms."
+        )
+        binarySearch()
     }
 }
