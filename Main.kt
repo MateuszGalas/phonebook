@@ -212,6 +212,34 @@ class PhoneBook {
             "Searching time: ${searchTime / 60000} min. ${(searchTime % 60000) / 1000} sec. ${searchTime % 1000} ms."
         )
     }
+
+    fun hashTable() {
+        val hashTable = hashMapOf<String, Int>()
+        val start = System.currentTimeMillis()
+        var counter = 0
+
+        for (i in 0 until book.lastIndex) {
+            hashTable[book[i].substringAfter(" ")] = book[i].substringBefore(" ").toInt()
+        }
+        val end = System.currentTimeMillis()
+
+        for (element in find) {
+            if (element in hashTable) counter++
+        }
+        val end2 = System.currentTimeMillis()
+
+        val duration = end2 - start
+        val duration2 = end - start
+        val duration3 = end2 - end
+        println(
+            "Found $counter / ${find.size} entries. Time taken: " +
+                    "${duration / 60000} min. ${(duration % 60000) / 1000} sec. ${duration % 1000} ms."
+        )
+
+        println("Creating time: ${duration2 / 60000} min. ${(duration2 % 60000) / 1000} sec. ${duration2 % 1000} ms.")
+        println("Searching time: ${duration3 / 60000} min. ${(duration3 % 60000) / 1000} sec. ${duration3 % 1000} ms.")
+
+    }
 }
 
 fun main() {
@@ -226,5 +254,9 @@ fun main() {
         println()
         println("Start searching (quick sort + binary search)...")
         binarySearch()
+
+        println()
+        println("Start searching (hash table)...")
+        hashTable()
     }
 }
